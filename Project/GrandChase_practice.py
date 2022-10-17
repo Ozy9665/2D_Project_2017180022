@@ -84,7 +84,7 @@ while running:
 
     # 시뮬레이션
     elesis.update()
-    
+
     # 렌더링 : 보여준다
     clear_canvas()
     land.draw()
