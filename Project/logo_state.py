@@ -2,23 +2,25 @@ from pico2d import *
 import game_framework
 import title_state
 
-image = None
+logo_image = None
+background_image = None
 logo_time = 0.0
 
 
 def enter():
-    global image
-    image = load_image('그체 로고.png')
+    global logo_image, background_image
+    logo_image = load_image('그체 로고.png')
+    background_image = load_image('WhiteBackground.png')
 
 
 def exit():
-    global image
-    del image
+    global logo_image, background_image
+    del logo_image, background_image
 
 
 def update():
     global logo_time
-    if logo_time > 1.0:
+    if logo_time > 0.35:
         logo_time = 0
         game_framework.change_state(title_state)
     delay(0.01)
@@ -27,7 +29,8 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(400, 300)
+    background_image.draw(700, 512)
+    logo_image.draw(700, 512)
     update_canvas()
 
 

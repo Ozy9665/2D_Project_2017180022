@@ -1,16 +1,22 @@
 from pico2d import *
+import pygame
 import game_framework
 import play_state
 
 image = None
+ps_image = None     # press start
+
 
 def enter():
-    global image
-    image = load_image('희망.jpg')
+    global image, ps_image
+    image = load_image('Elesis_Title.png')
+    ps_image = load_image('press_start_rem.png')
+
 
 def exit():
-    global image
+    global image, ps_image
     del image
+    del ps_image
 
 
 def handle_events():
@@ -27,7 +33,8 @@ def handle_events():
 
 def draw():
     clear_canvas()
-    image.draw(400, 300)
+    image.draw(720, 505)
+    ps_image.draw(720, 200)
     update_canvas()
 
 
