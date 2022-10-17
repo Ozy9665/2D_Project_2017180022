@@ -2,6 +2,10 @@ import pico2d
 import game_framework
 import title_state
 
+player = None
+background = None
+boss = None
+
 
 class BackGround:
     def __init__(self):
@@ -21,20 +25,37 @@ class Player:
         self.frame = 0
         self.dir, self.face_dir = 0, 1
         self.image = pico2d.load_image('elesis_animation.png')
-        self.attack_image = None
         self.item = None
+        self.attacking = 0
+        self.atk_time = 0.0
 
     def update(self):
         # self.frame = (self.frame + 1) % 8
         self.x += self.dir * 2
         self.x = pico2d.clamp(0, self.x, 1440)
+        if self.attacking == 1:
+            if self.atk_time > 0.25:
+                self.atk_time = 0.0
+                self.attacking = 0
+            else:
+                self.atk_time += 0.01
 
     def draw(self):
         # self.image.draw(self.x, self.y)
-        if self.dir == -1:
-            self.image.clip_draw(0, 253, 152, 118, self.x, self.y)
+        if self.attacking == 1:
+            if self.dir == -1:
+                self.image.clip_draw(0, 37, 210, 118, self.x, self.y)
+            elif self.dir == 1:
+                self.image.clip_draw(210, 37, 210, 118, self.x, self.y)
+            else:
+                if self.face_dir == 1:
+                    self.image.clip_draw(210, 37, 210, 118, self.x, self.y)
+                else:
+                    self.image.clip_draw(0, 37, 210, 118, self.x, self.y)
+        elif self.dir == -1:
+            self.image.clip_draw(0, 156, 175, 100, self.x, self.y)
         elif self.dir == 1:
-            self.image.clip_draw(152, 253, 152, 118, self.x, self.y)
+            self.image.clip_draw(175, 156, 175, 100, self.x, self.y)
         else:
             if self.face_dir == 1:
                 self.image.clip_draw(152, 253, 152, 118, self.x, self.y)
@@ -68,7 +89,6 @@ class Boss:
             self.left_image.draw(self.x, self.y)
 
 
-
 def enter():
     global player, background, boss
     player = Player()
@@ -100,7 +120,14 @@ def draw_world():
     boss.draw()
 
 
+def stop_atk():
+    global player
+    player.attacking = 0
+
+
+
 def handle_events():
+    global player
     events = pico2d.get_events()
     for event in events:
         if event.type == pico2d.SDL_QUIT:
@@ -109,6 +136,8 @@ def handle_events():
             match event.key:
                 case pico2d.SDLK_ESCAPE:
                     game_framework.change_state(title_state)
+                case pico2d.SDLK_z:
+                    player.attacking = 1
                 # case pico2d.SDLK_i:
                     # game_framework.push_state(item_state)
                 case pico2d.SDLK_LEFT:
@@ -123,6 +152,8 @@ def handle_events():
                 case pico2d.SDLK_RIGHT:
                     player.dir -= 1
                     player.face_dir = 1
+                # case pico2d.SDLK_z:
+                #     player.attacking = 1
 
 
 def pause():
@@ -133,6 +164,4 @@ def resume():
     pass
 
 
-player = None
-background = None
-boss = None
+
