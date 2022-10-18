@@ -20,13 +20,13 @@ class BackGround:
         self.back_image.draw(720, 506)
         for x in range(200, 1200 + 1, 200):
             self.land_image.draw(x, 20)
-        self.land_image.draw(-100, 200)
-        self.land_image.draw(1300, 200)
-        self.land_image.draw(300, 400)
-        self.land_image.draw(1100, 400)
-        self.land_image.draw(0, 600)
-        self.land_image.draw(500, 600)
-        self.land_image.draw(1200,600)
+        self.land_image.draw(-100, 220)
+        self.land_image.draw(1300, 220)
+        self.land_image.draw(300, 420)
+        self.land_image.draw(1100, 420)
+        self.land_image.draw(0, 620)
+        self.land_image.draw(500, 620)
+        self.land_image.draw(1200, 620)
 
 
 class Player:
@@ -38,6 +38,8 @@ class Player:
         self.item = None
         self.attacking = 0
         self.atk_time = 0.0
+        self.jumping = 0
+        self.jump_time = 0.0
 
     def update(self):
         self.frame = (self.frame + 1) % 2
@@ -49,6 +51,13 @@ class Player:
                 self.attacking = 0
             else:
                 self.atk_time += 0.01
+        if self.jumping == 1:
+            if self.jump_time >= 0.5:
+                self.jumping = 0
+                self.jump_time = 0
+            else:
+                self.y += 4
+                self.jump_time += 0.01
 
     def draw(self):
         # self.image.draw(self.x, self.y)
@@ -227,6 +236,8 @@ def handle_events():
                     player.dir -= 1
                 case pico2d.SDLK_RIGHT:
                     player.dir += 1
+                case pico2d.SDLK_UP:
+                    player.jumping = 1
         elif event.type == pico2d.SDL_KEYUP:
             match event.key:
                 case pico2d.SDLK_LEFT:
