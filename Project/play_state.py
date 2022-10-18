@@ -89,6 +89,9 @@ class Boss:
         # if 10 < (player.x - self.x) < 10:
         #     pass
         if -500 < (player.x - self.x) < 500:
+            if -60 < (player.x - self.x) < 60 and player.attacking == 1:
+                self.left_image = None      # 사망처리
+                self.right_image = None     # but 미완성
             self.x += self.dir * 0.4
         self.x = pico2d.clamp(250, self.x, 1200)
 
@@ -115,6 +118,9 @@ class Gorgon:
     def update(self):
         # self.frame = (self.frame + 1) % 8
         if -400 < (player.x - self.x) < 400:
+            if -30 < (player.x - self.x) < 30 and player.attacking == 1:
+                self.left_image = None      # 사망처리
+                self.right_image = None     # but 미완성
             self.x += self.dir * 0.6
         self.x = pico2d.clamp(250, self.x, 1200)
 
@@ -141,6 +147,9 @@ class Gon:
     def update(self):
         # self.frame = (self.frame + 1) % 8
         if -300 < (player.x - self.x) < 300:
+            if -30 < (player.x - self.x) < 30 and player.attacking == 1:
+                self.left_image = None      # 사망처리
+                self.right_image = None     # but 미완성
             self.x += self.dir * 0.8
         self.x = pico2d.clamp(250, self.x, 1200)
 
@@ -187,9 +196,12 @@ def draw():
 def draw_world():
     background.draw()
     player.draw()
-    boss.draw()
-    gorgon.draw()
-    gon.draw()
+    if boss.left_image != None:
+        boss.draw()
+    if gorgon.left_image != None:
+        gorgon.draw()
+    if gon.left_image != None:
+        gon.draw()
 
 
 def stop_atk():
