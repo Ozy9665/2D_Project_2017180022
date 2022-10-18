@@ -7,6 +7,7 @@ player = None
 background = None
 boss = None
 gorgon = None
+gon = None
 
 
 class BackGround:
@@ -21,6 +22,11 @@ class BackGround:
             self.land_image.draw(x, 20)
         self.land_image.draw(-100, 200)
         self.land_image.draw(1300, 200)
+        self.land_image.draw(300, 400)
+        self.land_image.draw(1100, 400)
+        self.land_image.draw(0, 600)
+        self.land_image.draw(500, 600)
+        self.land_image.draw(1200,600)
 
 
 class Player:
@@ -80,8 +86,10 @@ class Boss:
 
     def update(self):
         # self.frame = (self.frame + 1) % 8
+        # if 10 < (player.x - self.x) < 10:
+        #     pass
         if -500 < (player.x - self.x) < 500:
-            self.x += self.dir * 0.5
+            self.x += self.dir * 0.4
         self.x = pico2d.clamp(250, self.x, 1200)
 
     def draw(self):
@@ -106,8 +114,34 @@ class Gorgon:
 
     def update(self):
         # self.frame = (self.frame + 1) % 8
-        if -500 < (player.x - self.x) < 400:
-            self.x += self.dir * 0.5
+        if -400 < (player.x - self.x) < 400:
+            self.x += self.dir * 0.6
+        self.x = pico2d.clamp(250, self.x, 1200)
+
+    def draw(self):
+        if player.x >= self.x:
+            self.dir = 1
+            self.right_image.draw(self.x, self.y)
+        elif player.x < self.x:
+            self.dir = -1
+            self.left_image.draw(self.x, self.y)
+
+
+class Gon:
+    global player
+
+    def __init__(self):
+        self.x, self.y = 400, 140
+        self.frame = 0
+        self.dir, self.face_dir = 0, 1
+        self.left_image = pico2d.load_image('Gon_left.png')
+        self.right_image = pico2d.load_image('Gon_right.png')
+        self.attack_image = None
+
+    def update(self):
+        # self.frame = (self.frame + 1) % 8
+        if -300 < (player.x - self.x) < 300:
+            self.x += self.dir * 0.8
         self.x = pico2d.clamp(250, self.x, 1200)
 
     def draw(self):
@@ -120,25 +154,28 @@ class Gorgon:
 
 
 def enter():
-    global player, background, boss, gorgon
+    global player, background, boss, gorgon, gon
     player = Player()
     boss = Boss()
     gorgon = Gorgon()
+    gon = Gon()
     background = BackGround()
 
 
 def exit():
-    global player, background, boss, gorgon
+    global player, background, boss, gorgon, gon
     del player
     del background
     del gorgon
     del boss
+    del gon
 
 
 def update():
     player.update()
     boss.update()
     gorgon.update()
+    gon.update()
 
 
 def draw():
@@ -152,6 +189,7 @@ def draw_world():
     player.draw()
     boss.draw()
     gorgon.draw()
+    gon.draw()
 
 
 def stop_atk():
