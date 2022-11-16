@@ -18,13 +18,14 @@ key_event_table = {
 class IDLE:
     @staticmethod
     def enter(self,event):
-        print('ENTER IDLE')
+        # print('ENTER IDLE')
         self.dir = 0
         self.timer = 1000
 
     @staticmethod
     def exit(self, event):
-        print('EXIT IDLE')
+        # print('EXIT IDLE')
+        pass
 
 
     @staticmethod
@@ -132,6 +133,7 @@ class Boy:
 
     def draw(self):
         self.cur_state.draw(self)
+        draw_rectangle(*self.get_bb())
 
     def add_event(self, event):
         self.event_que.insert(0, event)
@@ -145,3 +147,9 @@ class Boy:
         print('FIRE BALL')
         ball = Ball(self.x, self.y, self.face_dir*2)
         game_world.add_object(ball, 1)
+
+    def get_bb(self):
+        return self.x - 15, self.y - 50, self.x + 15, self.y + 50
+
+    def handle_collision(self, other, group):
+        pass

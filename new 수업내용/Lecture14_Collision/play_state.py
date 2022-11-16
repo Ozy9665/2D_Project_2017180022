@@ -33,14 +33,32 @@ def enter():
     balls = [Ball() for i in range(10)]
     game_world.add_objects(balls, 1)
 
+    # 충돌 대상 정보를 등록
+    game_world.add_collision_pairs(boy, balls, 'boy:ball')
+
 
 # 종료
 def exit():
     game_world.clear()
 
+
 def update():
     for game_object in game_world.all_objects():
         game_object.update()
+
+    for a, b, group in game_world.all_collision_pairs():
+        if collide(a, b):
+            print('COLLISION ', group)
+            a.handle_collision(b, group)
+            b.handle_collision(a, group)
+
+    # 충돌체크
+    # 볼들과 소년의 충돌
+    # for ball in balls.copy():
+    #     if collide(boy, ball):
+    #         print('COLLISION boy:ball')
+    #         balls.remove(ball)
+    #         game_world.remove_object(ball)
 
 def draw_world():
     for game_object in game_world.all_objects():
@@ -58,6 +76,20 @@ def resume():
     pass
 
 
+def collide(a, b):
+    la, ba, ra, ta = a.get_bb()
+    lb, bb, rb, tb = b.get_bb()
+
+    if la > rb:
+        return False
+    if ra < lb:
+        return False
+    if ta < bb:
+        return False
+    if ba > tb:
+        return False
+
+    return True
 
 
 def test_self():
