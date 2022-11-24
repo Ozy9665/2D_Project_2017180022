@@ -10,6 +10,7 @@ import server
 
 from boy import Boy
 from ground import Ground
+from ground import BackGround
 from ball import Ball
 from zombie import Zombie
 from ball import Ball
@@ -33,8 +34,11 @@ def collide(a, b):
 
 def enter():
 
+    background = BackGround()
+    game_world.add_object(background, 0)
     ground = Ground()
     game_world.add_object(ground, 0)
+
 
     ball_list = [Ball() for i in range(30)]
     game_world.add_objects(ball_list, 1)
