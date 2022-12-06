@@ -37,86 +37,6 @@ key_event_table = {
 }
 
 
-# Boy States
-# class AtkState:
-#
-#     def enter(boy, event):
-#         if event == RIGHTKEY_DOWN:
-#             boy.x_velocity += RUN_SPEED_PPS
-#         elif event == RIGHTKEY_UP:
-#             boy.x_velocity -= RUN_SPEED_PPS
-#         if event == LEFTKEY_DOWN:
-#             boy.x_velocity -= RUN_SPEED_PPS
-#         elif event == LEFTKEY_UP:
-#             boy.x_velocity += RUN_SPEED_PPS
-#         if event == Z_DOWN:
-#             pass
-#
-#         if event == UPKEY_DOWN:
-#             if boy.landing:
-#                 boy.y += 10
-#                 boy.jp = -900
-#                 boy.gravity = 1
-#                 boy.landing = False
-#             else:
-#                 pass
-#         # elif event == UPKEY_UP:
-#         #     boy.y_velocity -= RUN_SPEED_PPS
-#         # if event == DOWNKEY_DOWN:
-#         #     boy.y_velocity -= RUN_SPEED_PPS
-#         # elif event == DOWNKEY_UP:
-#         #     boy.y_velocity += RUN_SPEED_PPS
-#
-#
-#
-#     def exit(boy, event):
-#         pass
-#
-#     def do(boy):
-#         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
-#         boy.x += boy.x_velocity * game_framework.frame_time
-#         boy.y_velocity = boy.gravity + boy.jp
-#         boy.y -= boy.y_velocity * game_framework.frame_time
-#         boy.x = clamp(50, boy.x, server.background.w-1-50)
-#         boy.y = clamp(50, boy.y, server.background.h-1-50)
-#
-#         # speed
-#         if boy.landing == False:
-#             boy.gravity += 2
-#             boy.jp += 10
-#         elif boy.landing:
-#             boy.jp = 0
-#
-#
-#
-#
-#
-#     def draw(boy):
-#         sx, sy = boy.x - server.background.window_left, boy.y - server.background.window_bottom
-#
-#         boy.font.draw(sx - 40, sy + 40, '%d' % (boy.ballCount), (255, 255, 0))
-#
-#         if boy.x_velocity > 0:
-#             boy.image.clip_draw(int(boy.frame) * 330, 230, 330, 230, sx, sy, 163, 163)
-#             boy.dir = 1
-#         elif boy.x_velocity < 0:
-#             boy.image.clip_draw(int(boy.frame) * 330, 0, 330, 230, sx, sy, 163, 163)
-#             boy.dir = -1
-#         else:
-#             # if boy x_velocity == 0
-#             if boy.y_velocity > 0 or boy.y_velocity < 0:
-#                 if boy.dir == 1:
-#                     boy.image.clip_draw(int(boy.frame) * 330, 230, 330, 230, sx, sy, 163, 163)
-#                 else:
-#                     boy.image.clip_draw(int(boy.frame) * 330, 0, 330, 230, sx, sy, 163, 163)
-#             else:
-#                 # boy is idle
-#                 if boy.dir == 1:
-#                     boy.image.clip_draw(int(boy.frame) * 330, 690, 330, 230, sx, sy, 163, 163)
-#                 else:
-#                     boy.image.clip_draw(int(boy.frame) * 330, 460, 330, 230, sx, sy, 163, 163)
-
-
 class WalkingState:
 
     def enter(boy, event):
@@ -244,8 +164,6 @@ class Boy:
             self.cur_state = next_state_table[self.cur_state][event]
             self.cur_state.enter(self, event)
 
-
-
     def draw(self):
         self.cur_state.draw(self)
 
@@ -253,6 +171,7 @@ class Boy:
         print('SWORD FIRE')
         fire = Fire(self.x, self.y, self.dir * 10)
         game_world.add_object(fire, 1)
+        game_world.add_collision_pairs(server.fire, server.gon, 'fire:enemies')
 
     def handle_event(self, event):
         if (event.type, event.key) in key_event_table:
@@ -262,7 +181,7 @@ class Boy:
     def handle_collision(self, other, group):       # 충돌체크
         if group == 'boy:land':
             if self.y > other.y and self.landing == False:
-                # print('she is landing')
+                print('she is landing')
                 self.landing = True
                 self.gravity = 0
                 self.jp = 0
