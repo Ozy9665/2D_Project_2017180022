@@ -19,7 +19,7 @@ class Fire():
             self.image.draw(sx, sy, 100, 100)
         else:
             self.image.clip_composite_draw(0, 0, 948, 232, 3.14159, 'v', sx, sy, 100, 100)
-
+        # draw_rectangle(*self.get_bb())
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 

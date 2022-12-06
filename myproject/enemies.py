@@ -48,6 +48,7 @@ class Gon:
             self.image.draw(sx, sy, 100, 100)
         else:
             self.image.clip_composite_draw(0, 0, 162, 200, 3.14159, 'v', sx, sy, 100, 100)
+        # draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
@@ -56,7 +57,7 @@ class Gon:
         pass
 
     def handle_collision(self, other, group):       # 충돌체크
-        if group == 'fire:enemies':
+        if group == 'fire:gon':
             print('enemy hit fire')
             self.hp -= 100
             print(self.hp)

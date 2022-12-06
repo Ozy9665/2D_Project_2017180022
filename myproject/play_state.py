@@ -14,6 +14,7 @@ from background import GonLand1
 # from background import TileBackground as Background
 from enemies import Gon
 import server
+from zombie import Zombie
 
 
 def enter():
@@ -35,6 +36,9 @@ def enter():
     server.gon = Gon(100, 120, 1)
     game_world.add_object(server.gon, 1)
 
+    server.zombie = Zombie()
+    game_world.add_object(server.zombie, 1)
+
     # server.ball = [Ball() for i in range(100)]
     # ball_list = [Ball() for i in range(100)]
     # game_world.add_objects(ball_list, 1)
@@ -42,7 +46,7 @@ def enter():
     # 충돌 그룹 관리
     # game_world.add_collision_pairs(server.boy, ball_list, 'boy:ball')
     game_world.add_collision_pairs(server.boy, server.gonland, 'boy:land')
-    game_world.add_collision_pairs(None, server.gon, 'fire:enemies')
+    game_world.add_collision_pairs(None, server.gon, 'fire:gon')
     game_world.add_collision_pairs(server.boy, server.gon, 'boy:gon')
 
 def exit():
