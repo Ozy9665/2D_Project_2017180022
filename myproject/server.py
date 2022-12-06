@@ -4,4 +4,6 @@ background = None
 gonland = None
 gon = None
 fire = None
-egg = None
+gonegg = None
+gorgon = None
+gorgos = None

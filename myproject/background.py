@@ -1,5 +1,7 @@
 import random
 import server
+import game_framework
+import game_world
 
 from pico2d import *
 
@@ -10,6 +12,9 @@ class GonLand1:
     def __init__(self):
         if GonLand1.image == None:
             self.image = load_image('land_before.png')
+        self.bgm = load_music('GorgosDG.mp3')
+        self.bgm.set_volume(32)
+        self.bgm.repeat_play()
         self.w = self.image.w
         self.h = self.image.h
         self.x, self.y = 0, 30
@@ -39,6 +44,10 @@ class FixedBackground:
         self.canvas_height = get_canvas_height()
         self.w = self.image.w
         self.h = self.image.h
+        self.window_left = clamp(0, int(server.boy.x) - self.canvas_width // 2,
+                                 self.w - self.canvas_width - 1)
+        self.window_bottom = clamp(0, int(server.boy.y) - self.canvas_height // 2,
+                                   self.h - self.canvas_height - 1)
 
     def draw(self):
         self.image.clip_draw_to_origin(

@@ -3,10 +3,13 @@ import game_world
 import server
 
 class GonEgg():
+    image = None
 
     def __init__(self, x, y, velocity):
-        GonEgg.image = load_image('gon_egg.png')
+        if GonEgg.image is None:
+            GonEgg.image = load_image('gon_egg.png')
         self.x, self.y, self.velocity = x, y, velocity
+
 
     def draw(self):
         sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom

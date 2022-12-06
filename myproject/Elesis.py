@@ -48,29 +48,27 @@ class WalkingState:
             boy.x_velocity -= RUN_SPEED_PPS
         elif event == LEFTKEY_UP:
             boy.x_velocity += RUN_SPEED_PPS
-        if event == Z_DOWN:
-            pass
-
-        if event == UPKEY_DOWN:
-            if boy.landing:
-                boy.y += 10
+        elif event == Z_DOWN:
+            if boy.mp>100:
+                boy.mp -= 100
+                boy.sword_fire()
+        elif event == UPKEY_DOWN:
+            if boy.landing == True:
+                boy.y += 30
                 boy.jp = -1000
-                boy.gravity = 1
+                boy.gravity = 30
                 boy.landing = False
             else:
                 pass
+
         # elif event == UPKEY_UP:
         #     boy.y_velocity -= RUN_SPEED_PPS
-        if event == DOWNKEY_DOWN:
-            boy.jp += 500
+        # if event == DOWNKEY_DOWN:
+        #     boy.jp += 500
         # elif event == DOWNKEY_UP:
         #     boy.y_velocity += RUN_SPEED_PPS
 
-
-
     def exit(boy, event):
-        if event == Z_DOWN:
-            boy.sword_fire()
         pass
 
     def do(boy):
@@ -81,10 +79,13 @@ class WalkingState:
         boy.x = clamp(50, boy.x, server.background.w-1-50)
         boy.y = clamp(50, boy.y, server.background.h-1-50)
 
+        if boy.mp < 1000:
+            boy.mp += 1
+
         # speed
         if boy.landing == False:
-            boy.gravity += 2
-            boy.jp += 10
+            boy.gravity += 30
+            boy.jp += 20
         elif boy.landing:
             boy.jp = 0
 
@@ -95,7 +96,7 @@ class WalkingState:
     def draw(boy):
         sx, sy = boy.x - server.background.window_left, boy.y - server.background.window_bottom
 
-        boy.font.draw(sx - 40, sy + 80, '%d' % (boy.hp), (255, 255, 0))
+        boy.font.draw(sx - 40, sy + 80, 'HP:%d   MP:%d' % (boy.hp, boy.mp), (255, 255, 0))
 
         if boy.x_velocity > 0:
             boy.image.clip_draw(int(boy.frame) * 330, 230, 330, 230, sx, sy, 163, 163)
@@ -125,13 +126,17 @@ next_state_table = {
 
 
 class Boy:
+    image = None
+    die_sound = None
 
     def __init__(self):
         # Boy is only once created, so instance image loading is fine
+        self.kill_score = 0
         self.landing = False
-        self.gravity = 1
+        self.gravity = 30
         self.jp = 0
-        self.image = load_image('elesis_animation_sheet.png')
+        if Boy.image is None:
+            self.image = load_image('elesis_animation_sheet.png')
         self.ballCount = 0
         self.font = load_font('ENCR10B.TTF', 16)
         self.hp, self.mp = 1000, 0
@@ -141,6 +146,12 @@ class Boy:
         self.event_que = []
         self.cur_state = WalkingState
         self.cur_state.enter(self, None)
+        self.start_sound = load_wav('StartVoice.mp3')
+        self.start_sound.set_volume(32)
+        self.start_sound.play()
+        if Boy.die_sound is None:
+            Boy.die_sound = load_wav('k_ahhh.mp3')
+            Boy.die_sound.set_volume(32)
         # self.x, self.y = get_canvas_width() // 2, get_canvas_height() // 2
         # self.x, self.y = server.background.w // 2, server.background.h // 2
         self.x, self.y = 500, 300
@@ -163,16 +174,19 @@ class Boy:
             self.cur_state.exit(self, event)
             self.cur_state = next_state_table[self.cur_state][event]
             self.cur_state.enter(self, event)
-
+        if self.hp <= 0:
+            Boy.die_sound.play()
+            game_world.remove_object(self)
     def draw(self):
         self.cur_state.draw(self)
 
     def sword_fire(self):
-        print('SWORD FIRE')
-        fire = Fire(self.x, self.y, self.dir * 10)
-        game_world.add_object(fire, 1)
-        game_world.add_collision_pairs(server.fire, server.gon, 'fire:enemies')
-
+        # print('SWORD FIRE')
+        server.fire = Fire(self.x, self.y, self.dir * 10)
+        game_world.add_object(server.fire, 1)
+        game_world.add_collision_pairs(server.fire, server.gon, 'fire:gon')
+        game_world.add_collision_pairs(server.fire, server.gorgon, 'fire:gorgon')
+        game_world.add_collision_pairs(server.fire, server.gorgos, 'fire:gorgos')
     def handle_event(self, event):
         if (event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
@@ -185,3 +199,11 @@ class Boy:
                 self.landing = True
                 self.gravity = 0
                 self.jp = 0
+        elif group == 'boy:egg':
+            self.hp -= 1
+        elif group == 'boy:gorgon':
+            if server.gorgon.atk == True:
+                self.hp -= 0.75
+        elif group == 'boy:gorgos':
+            if server.gorgos.atk is True:
+                self.hp -= 2

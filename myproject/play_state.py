@@ -13,16 +13,20 @@ from background import FixedBackground as Background
 from background import GonLand1
 # from background import TileBackground as Background
 from enemies import Gon
+from enemies import Gorgon
+from enemies import Gorgos
 import server
 from zombie import Zombie
 
 
 def enter():
+    server.boy = Boy()
+    game_world.add_object(server.boy, 1)
     server.background = Background()
     game_world.add_object(server.background, 0)
 
     server.gonland = GonLand1()
-    game_world.add_object(server.gonland, 1)
+    game_world.add_object(server.gonland, 0)
     # gonland1 = [GonLand() for i in range(10)]
     # game_world.add_objects(gonland1, 1)
     # for gl in gonland1:
@@ -30,14 +34,18 @@ def enter():
     #     gl.x += x
     #     x += 200
 
-    server.boy = Boy()
-    game_world.add_object(server.boy, 1)
 
-    server.gon = Gon(100, 120, 1)
+
+    server.gon = Gon(1500, 120, -1)
     game_world.add_object(server.gon, 1)
 
-    server.zombie = Zombie()
-    game_world.add_object(server.zombie, 1)
+    server.gorgon = Gorgon(800, 110, -1)
+    game_world.add_object(server.gorgon, 1)
+
+    server.gorgos = Gorgos(2100, 200, -1)
+    game_world.add_object(server.gorgos, 1)
+    # server.gorgos = Gorgos(1600, 200, -1)
+    # game_world.add_object(server.gorgos, 1)
 
     # server.ball = [Ball() for i in range(100)]
     # ball_list = [Ball() for i in range(100)]
@@ -46,8 +54,13 @@ def enter():
     # 충돌 그룹 관리
     # game_world.add_collision_pairs(server.boy, ball_list, 'boy:ball')
     game_world.add_collision_pairs(server.boy, server.gonland, 'boy:land')
+    # game_world.add_collision_pairs(server.fire, server.gon, 'fire:gon')
     game_world.add_collision_pairs(None, server.gon, 'fire:gon')
-    game_world.add_collision_pairs(server.boy, server.gon, 'boy:gon')
+    game_world.add_collision_pairs(server.boy, server.gorgon, 'boy:gorgon')
+    game_world.add_collision_pairs(server.boy, server.gorgos, 'boy:gorgos')
+    # game_world.add_collision_pairs(server.boy, server.gorgos, 'boy:gorgos')
+    # game_world.add_collision_pairs(server.boy, server.gon, 'boy:gon')
+    # game_world.add_collision_pairs(server.gorgon, server.fire, 'fire:gorgon')
 
 def exit():
     game_world.clear()
